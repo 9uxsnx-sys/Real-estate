@@ -1,0 +1,70 @@
+
+@font-face {
+font-display: swap;
+font-family: 'Geist';
+font-style: normal;
+font-weight: 400;
+font-stretch: normal;
+unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2Fa59aabd24d95f76b7e97143fa20c6a4c83a00c63?generation=1770755084064034&alt=media') format('woff2');
+}
+
+@font-face {
+font-display: swap;
+font-family: 'Geist';
+font-style: normal;
+font-weight: 600;
+font-stretch: normal;
+unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2Fa59aabd24d95f76b7e97143fa20c6a4c83a00c63?generation=1770755084064034&alt=media') format('woff2');
+}
+
+@font-face {
+font-display: swap;
+font-family: 'Geist';
+font-style: normal;
+font-weight: 300;
+font-stretch: normal;
+unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2Fa59aabd24d95f76b7e97143fa20c6a4c83a00c63?generation=1770755084064034&alt=media') format('woff2');
+}
+
+@font-face {
+font-display: swap;
+font-family: 'Geist';
+font-style: normal;
+font-weight: 700;
+font-stretch: normal;
+unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2Fa59aabd24d95f76b7e97143fa20c6a4c83a00c63?generation=1770755084064034&alt=media') format('woff2');
+}
+
+@font-face {
+font-display: auto;
+font-family: 'Times New Roman';
+font-style: normal;
+font-weight: normal;
+font-stretch: normal;
+unicode-range: U+0-10FFFF;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2Fd9d9ad4ba85fcd9dbe69e7866613756f1dbb4e97?generation=1770206021926212&alt=media') format('woff2');
+}
+
+@font-face {
+font-display: auto;
+font-family: 'Arial';
+font-style: normal;
+font-weight: normal;
+font-stretch: normal;
+unicode-range: U+0-10FFFF;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2F2c5cb7cfa19eea5d90c375dc0f9f8e502ea97f0c?generation=1770206021930931&alt=media') format('woff2');
+}
+
+@font-face {
+font-display: auto;
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-stretch: 100%;
+unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+src: url('https://storage.googleapis.com/download/storage/v1/b/prd-shared-services.firebasestorage.app/o/h2m-assets%2F41ca6b7e4818eb81531d8006ff7ddd971c640879?generation=1771574755071897&alt=media') format('woff2');
+}

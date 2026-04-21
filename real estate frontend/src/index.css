@@ -1,0 +1,44 @@
+@import 'tailwindcss' source(none);
+@source './**/*.{js,ts,jsx,tsx}';
+@import 'tw-animate-css';
+@import './styles/globals.css';
+
+@layer base {
+  html, body, #root { min-height: 100vh; height: 100%; margin: 0; }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgb(250, 250, 250);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgb(199, 199, 199);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(136, 136, 136);
+  }
+}
+
+@layer utilities {
+  /* Performance optimizations */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}

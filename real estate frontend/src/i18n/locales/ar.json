@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "properties": "عقارات",
+    "projects": "مشاريع",
+    "contact": "اتصل بنا",
+    "contactMobile": "اتصل بنا"
+  },
+  "hero": {
+    "ourProperties": "عقاراتنا",
+    "ourProjects": "مشاريعنا",
+    "searchPlaceholder": "البحث بالموقع أو المشروع أو اسم العقار...",
+    "searchByLocation": "البحث بالموقع...",
+    "sortBy": "ترتيب حسب",
+    "featured": "مميز",
+    "priceLow": "السعر: من الأقل للأعلى",
+    "priceHigh": "السعر: من الأعلى للأقل",
+    "newest": "الأحدث",
+    "propertyType": "نوع العقار",
+    "allTypes": "جميع الأنواع",
+    "project": "المشروع",
+    "allProjects": "جميع المشاريع",
+    "space": "المساحة (م²)",
+    "min": "الحد الأدنى",
+    "max": "الحد الأقصى",
+    "propertiesCount": "{{count}} عقار"
+  },
+  "property": {
+    "beds": "غرف",
+    "baths": "حمامات",
+    "sqft": "م²",
+    "forSale": "للبيع",
+    "forInvestment": "للاستثمار",
+    "luxury": "فاخر",
+    "viewDetails": "عرض التفاصيل",
+    "seeDetails": "عرض التفاصيل",
+    "backToProperties": "العودة إلى العقارات",
+    "overview": "نظرة عامة",
+    "features": "المميزات",
+    "location": "الموقع",
+    "propertyType": "نوع العقار",
+    "propertyCode": "رمز العقار",
+    "propertyCodeDesc": "عند الاتصال بنا بخصوص هذا العقار، يرجى تقديم هذا الرمز حتى نعرف أي عقار تشير إليه.",
+    "contactAgent": "الاتصال بالوكيل",
+    "whatsapp": "واتساب",
+    "downloadBrochure": "تحميل الكتيب",
+    "share": "مشاركة",
+    "save": "حفظ"
+  },
+  "project": {
+    "backToProjects": "العودة إلى المشاريع",
+    "propertiesInProject": "عقارات في هذا المشروع",
+    "seeMore": "عرض المزيد",
+    "startingFrom": "يبدأ من",
+    "units": "وحدات",
+    "viewProject": "عرض المشروع",
+    "exploreProperties": "استكشاف العقارات",
+    "readyToFind": "هل أنت مستعد للعثور على منزلك؟",
+    "browseDescription": "تصفح جميع العقارات المتاحة واعثر على ما يناسبك",
+    "customSection": {
+      "overview": "نظرة عامة",
+      "features": "المميزات"
+    }
+  },
+  "sidebar": {
+    "getInTouch": "تواصل معنا",
+    "sendMessage": "إرسال رسالة",
+    "followUs": "تابعنا",
+    "contactDesc": "يمكنك التواصل معنا عبر واتساب أو الاتصال بنا مباشرة:"
+  },
+  "gallery": {
+    "title": "معرض الصور",
+    "counter": "صورة {{current}} من {{total}}",
+    "close": "إغلاق المعرض",
+    "previous": "الصورة السابقة",
+    "next": "الصورة التالية",
+    "goTo": "الذهاب إلى الصورة"
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "notFound": "غير موجود",
+    "tryAgain": "حاول مرة أخرى",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "close": "إغلاق",
+    "next": "التالي",
+    "previous": "السابق"
+  },
+  "footer": {
+    "rights": "جميع الحقوق محفوظة",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
+  }
+}

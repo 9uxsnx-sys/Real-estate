@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "properties": "Properties",
+    "projects": "Projects",
+    "contact": "Contact Us Now",
+    "contactMobile": "Contact Us"
+  },
+  "hero": {
+    "ourProperties": "Our Properties",
+    "ourProjects": "Our Projects",
+    "searchPlaceholder": "Search by location, project, or property name...",
+    "searchByLocation": "Search by location...",
+    "sortBy": "Sort by",
+    "featured": "Featured",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low",
+    "newest": "Newest",
+    "propertyType": "Property Type",
+    "allTypes": "All Types",
+    "project": "Project",
+    "allProjects": "All Projects",
+    "space": "Space (sqft)",
+    "min": "Min m²",
+    "max": "Max m²",
+    "propertiesCount": "{{count}} properties"
+  },
+  "property": {
+    "beds": "beds",
+    "baths": "baths",
+    "sqft": "sqft",
+    "forSale": "For Sale",
+    "forInvestment": "For Investment",
+    "luxury": "Luxury",
+    "viewDetails": "View Details",
+    "seeDetails": "See Detail",
+    "backToProperties": "Back to Properties",
+    "overview": "Overview",
+    "features": "Features",
+    "location": "Location",
+    "propertyType": "Property Type",
+    "propertyCode": "Property Code",
+    "propertyCodeDesc": "When contacting us about this property, please provide this code so we know which property you're referring to.",
+    "contactAgent": "Contact Agent",
+    "whatsapp": "WhatsApp",
+    "downloadBrochure": "Download Brochure",
+    "share": "Share",
+    "save": "Save"
+  },
+  "project": {
+    "backToProjects": "Back to Projects",
+    "propertiesInProject": "Properties in This Project",
+    "seeMore": "See More",
+    "startingFrom": "Starting from",
+    "units": "units",
+    "viewProject": "View Project",
+    "exploreProperties": "Explore Properties",
+    "readyToFind": "Ready to Find Your Home?",
+    "browseDescription": "Browse all available properties and find your perfect match",
+    "customSection": {
+      "overview": "Overview",
+      "features": "Features"
+    }
+  },
+  "sidebar": {
+    "getInTouch": "Get in Touch",
+    "sendMessage": "Send Message",
+    "followUs": "Follow Us",
+    "contactDesc": "You can reach us on WhatsApp or call us directly:"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "counter": "Image {{current}} of {{total}}",
+    "close": "Close gallery",
+    "previous": "Previous image",
+    "next": "Next image",
+    "goTo": "Go to image"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "notFound": "Not Found",
+    "tryAgain": "Try Again",
+    "viewAll": "View All",
+    "showMore": "Show More",
+    "showLess": "Show Less",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}
