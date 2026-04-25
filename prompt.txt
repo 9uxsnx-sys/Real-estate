@@ -1,30 +1,37 @@
-Agent Directive: Fix Incorrect API Fallback & Mapping
-The Situation: You implemented a fallback to filters[area] because the code thinks the project relation doesn't exist. This is causing a 400 error and a "Not Found" UI. We need to stop the fallback and fix the actual relationship mapping.
+Issue: The filter filters[project][name][$eq]=... is failing. You must verify the exact schema path instead of using fallbacks like area.
 
-1. Stop the "Area" Fallback:
+1. Identify the Correct Field Path:
 
-Locate the logic in properties.ts (around line 38 and 76 based on the logs).
+Don't guess: Check the Project content type in the Strapi Admin.
 
-Remove the fallback logic that switches project to area. This is a "hallucinated" fix that is breaking the query.
+Is the main text field actually named name? If it is named title, the filter MUST be changed to filters[project][title][$eq]=....
 
-2. Identify the Correct Relation Name:
+If the relationship itself is plural, it MUST be filters[projects][name][$eq]=....
 
-Do not guess the name. Look at the Property content-type schema in Strapi.
+2. Audit the Query String Construction:
 
-Is the relation named project, project_link, or projects?
+Your logs show Downtown%20Views. Ensure you are using the qs library with { encodeValuesOnly: true }. Strapi can be very sensitive to how brackets [] are encoded in nested filters.
 
-Update the query string to use the exact internal name from Strapi.
+Update the fetcher:
 
-3. Fix the "Project Name" Path:
+JavaScript
+// Ensure the query looks like this for Strapi v4/v5
+const query = qs.stringify({
+  filters: {
+    project: { // Verify if this should be 'projects'
+      title: { // Verify if this should be 'name'
+        $eq: selectedProjectName
+      }
+    }
+  },
+  populate: '*'
+});
+3. Deep-Dive the 400 Error:
 
-Strapi filtering for relationships usually requires a deeper path. If project is the relation, ensure the query is:
-filters[project][name][$eq]=Downtown Views
+In api.ts:27, expand the [API Error] object in the console.
 
-If the project's display name is in a different field (like title), use:
-filters[project][title][$eq]=Downtown Views
+Look for response.data.error.details. It will likely say something like: "Column 'name' not found" or "Relation 'project' not found." * Use that exact feedback to rename the filter keys.
 
-4. Force Data Validation:
+4. Permission Check:
 
-Before sending the fetch request, console.log the final generated URL.
-
-If the URL doesn't work when pasted directly into a browser tab, it won't work in the app.
+Confirm that the Project content type has find and findOne enabled for the Public role. If the related type isn't public, filtering by its attributes will fail with a 400.
