@@ -35,10 +35,11 @@ function buildQueryParams(filters: PropertyFilters, locale?: string) {
   }
 
   if (filters.projectName) {
-    console.log('[API] Project filter requested but project relation not set in Strapi, falling back to area filter');
     queryObj.filters = {
       ...queryObj.filters,
-      area: { $containsi: filters.projectName }
+      project: {
+        name: { $eq: filters.projectName }
+      }
     };
   }
 
