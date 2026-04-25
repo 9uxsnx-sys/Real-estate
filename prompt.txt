@@ -1,39 +1,35 @@
-Task: The PropertiesListing component is crashing (White Screen) when fetching more data. You must fix the data transformation logic, register missing GSAP plugins, and handle 400 Bad Request errors.
+Issue: The filter for properties by project name is failing with a 400 error.
+URL in Console: .../api/properties?filters[project][name][$eq]=Downtown Views&populate=*
 
-1. Fix the Fatal Crash (formatters.ts & imagePath)
-The Error: Uncaught TypeError: imagePath.startsWith is not a function.
+Task 1: Verify the Relation Path
 
-The Cause: getImageUrl expects a string, but when you load more properties, it’s receiving null, undefined, or an object.
+Check Strapi Schema: Open the properties Content Type in Strapi. Is the relation field exactly named project (singular) or projects (plural)?
 
-Action: Open formatters.ts and update getImageUrl to include a safety check.
+Action: Update the filter key to match. If the relation is plural, the filter must be filters[projects][name][$eq]=....
 
-Logic: If imagePath is missing or not a string, return a placeholder image string or an empty string instead of crashing.
+Task 2: Fix URL Encoding
 
-Check: Ensure the mapping in PropertiesListing.tsx:128 passes the correct nested path (e.g., item.attributes.image.data.attributes.url).
+The Problem: The URL contains a space ("Downtown Views"). If the agent is concatenating strings manually, the space might be breaking the request.
 
-2. Fix the API 400 (Bad Request)
-The Error: .../api/properties?filters[project][name][$eq]=... 400 (Bad Request).
+Action: Use the qs (Query String) library to stringify the query parameters.
 
-The Cause: The URL encoding for the project filter is likely malformed or the Strapi field name project doesn't match the relation name in the backend.
+Example Structure: ```javascript
+const query = qs.stringify({
+filters: {
+project: {
+name: { $eq: projectName }
+}
+},
+populate: '*'
+}, { encodeValuesOnly: true });
 
-Action: * Log the exact URL being generated for "Load More."
 
-Verify that the relation in Strapi is named project and not projects.
+Task 3: Audit the "Project" Content Type
 
-Ensure the agent uses a robust query builder (like qs) or correctly encodes spaces in project names (e.g., "Downtown Views").
+Field Check: Does the Project content type actually have a field named name? If the field is named Title or projectName instead, the filter will fail with a 400.
 
-3. Fix GSAP "Missing Plugin" & "Target Null"
-The Error: Invalid property scrollTrigger... Missing plugin?.
+Action: Confirm the exact field name in the Project model and update the filter.
 
-Action: * Search the codebase for gsap.registerPlugin. If it's missing ScrollTrigger, add it: gsap.registerPlugin(ScrollTrigger);.
+Task 4: Add Defensive Error Handling
 
-Crucial: The "Target null" error is happening because GSAP is trying to animate elements that vanished when the React app crashed. Fixing the Image error (Task 1) will likely solve this, but add a check: if (!target) return; before any animation.
-
-4. Full Picture Diagnostic Report
-Agent, please provide a report covering:
-
-Data Structure: What does the JSON response look like for the "Load More" properties? (Print it to console).
-
-Mapping: Why did imagePath fail? Was the image missing in Strapi, or was the nesting level different?
-
-Fix Applied: Show the updated getImageUrl and the fixed Fetch URL.
+In PropertiesListing.tsx, find the filtering logic. If the API returns a 400, log the entire response body from Strapi. Strapi often sends a JSON object explaining why it's a 400 (e.g., "Field not found").

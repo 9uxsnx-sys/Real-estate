@@ -1,5 +1,6 @@
 import { fetchApi, API_URL } from './api';
 import type { Property } from '../types';
+import qs from 'qs';
 
 console.log('[API] Using API_URL:', API_URL);
 
@@ -13,51 +14,68 @@ export interface PropertyFilters {
 }
 
 function buildQueryParams(filters: PropertyFilters, locale?: string) {
-  const params: Record<string, string> = {};
+  const queryObj: any = {};
 
   if (locale) {
-    params.locale = locale;
+    queryObj.locale = locale;
   }
 
   if (filters.search) {
-    params['filters[name][$containsi]'] = filters.search;
+    queryObj.filters = {
+      ...queryObj.filters,
+      name: { $containsi: filters.search }
+    };
   }
 
   if (filters.propertyType) {
-    params['filters[property_type][$eq]'] = filters.propertyType;
+    queryObj.filters = {
+      ...queryObj.filters,
+      property_type: { $eq: filters.propertyType }
+    };
   }
 
   if (filters.projectName) {
-    const encodedName = encodeURIComponent(filters.projectName);
-    params['filters[project][name][$eq]'] = encodedName;
+    queryObj.filters = {
+      ...queryObj.filters,
+      project: {
+        name: { $eq: filters.projectName }
+      }
+    };
   }
 
   if (filters.minSpace) {
-    params['filters[space_sqm][$gte]'] = String(filters.minSpace);
+    queryObj.filters = {
+      ...queryObj.filters,
+      space_sqm: { $gte: filters.minSpace }
+    };
   }
 
   if (filters.maxSpace) {
-    params['filters[space_sqm][$lte]'] = String(filters.maxSpace);
+    queryObj.filters = {
+      ...queryObj.filters,
+      space_sqm: { ...queryObj.filters?.space_sqm, $lte: filters.maxSpace }
+    };
   }
 
-  switch (filters.sortBy) {
-    case 'price-low':
-      params.sort = 'price:asc';
-      break;
-    case 'price-high':
-      params.sort = 'price:desc';
-      break;
-    case 'newest':
-      params.sort = 'createdAt:desc';
-      break;
-    default:
-      break;
+  if (filters.sortBy) {
+    switch (filters.sortBy) {
+      case 'price-low':
+        queryObj.sort = ['price:asc'];
+        break;
+      case 'price-high':
+        queryObj.sort = ['price:desc'];
+        break;
+      case 'newest':
+        queryObj.sort = ['createdAt:desc'];
+        break;
+    }
   }
 
-  params['populate'] = '*';
+  queryObj.populate = '*';
 
-  console.log('[API] Query params:', params);
-  return params;
+  const queryString = qs.stringify(queryObj, { encodeValuesOnly: true });
+  console.log('[API] Query string:', queryString);
+  return queryString;
 }
 
 interface StrapiListResponse {

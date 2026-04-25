@@ -21,9 +21,16 @@ export class ApiError extends Error {
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    let errorData;
+    try {
+      errorData = await response.json();
+      console.error('[API Error] Response:', response.status, response.statusText, errorData);
+    } catch {
+      errorData = await response.text();
+      console.error('[API Error] Response:', response.status, response.statusText, errorData);
+    }
     throw new ApiError(
-      errorData?.error?.message || `API Error: ${response.status}`,
+      errorData?.error?.message || errorData?.message || `API Error: ${response.status}`,
       response.status,
       errorData
     );
@@ -33,19 +40,27 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 export async function fetchApi<T>(
   endpoint: string,
-  params?: ApiParams
+  params?: ApiParams | string
 ): Promise<T> {
-  const url = new URL(`${API_URL}${endpoint}`);
-
+  let urlString = `${API_URL}${endpoint}`;
+  
   if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        url.searchParams.append(key, String(value));
-      }
-    });
+    if (typeof params === 'string') {
+      urlString = `${urlString}?${params}`;
+    } else {
+      const url = new URL(urlString);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          url.searchParams.append(key, String(value));
+        }
+      });
+      urlString = url.toString();
+    }
   }
 
-  const response = await fetch(url.toString(), {
+  console.log('[API] Full URL:', urlString);
+  
+  const response = await fetch(urlString, {
     headers: {
       'Content-Type': 'application/json',
     },
