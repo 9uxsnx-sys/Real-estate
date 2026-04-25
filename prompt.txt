@@ -1,35 +1,36 @@
-Issue: The filter for properties by project name is failing with a 400 error.
-URL in Console: .../api/properties?filters[project][name][$eq]=Downtown Views&populate=*
+Agent Directive: Fix 400 Bad Request on Property Relationship Filtering
+The Problem: Filtering properties by project name triggers a 400 error. The console shows the request is failing at: /api/properties?filters[project][name][$eq]=Downtown Views.
 
-Task 1: Verify the Relation Path
+1. Verify the Relation Field Name (Critical)
 
-Check Strapi Schema: Open the properties Content Type in Strapi. Is the relation field exactly named project (singular) or projects (plural)?
+Go to Strapi Content-Type Builder > Property.
 
-Action: Update the filter key to match. If the relation is plural, the filter must be filters[projects][name][$eq]=....
+Check the exact name of the relation field linking to Projects.
 
-Task 2: Fix URL Encoding
+If the field is named projects (plural), the code must be edited to use filters[projects][name].
 
-The Problem: The URL contains a space ("Downtown Views"). If the agent is concatenating strings manually, the space might be breaking the request.
+If the field is named project_ref or something else, update the filter key to match exactly.
 
-Action: Use the qs (Query String) library to stringify the query parameters.
+2. Audit Deep Filtering Permissions
 
-Example Structure: ```javascript
-const query = qs.stringify({
-filters: {
-project: {
-name: { $eq: projectName }
-}
-},
-populate: '*'
-}, { encodeValuesOnly: true });
+In Strapi Settings > Roles > Public, ensure that NOT ONLY is Property findable, but Project is also findable.
 
+Strapi sometimes blocks "Deep Filtering" if the related content type (Projects) isn't also publicly accessible.
 
-Task 3: Audit the "Project" Content Type
+3. Fix URL Encoding with qs
 
-Field Check: Does the Project content type actually have a field named name? If the field is named Title or projectName instead, the filter will fail with a 400.
+The current URL shows Downtown%20Views. While this looks okay, Strapi v4/v5 prefers the qs library for complex nested filters.
 
-Action: Confirm the exact field name in the Project model and update the filter.
+Edit the fetcher: Replace manual string concatenation with the qs library to ensure the brackets and operators are encoded in a way Strapi understands.
 
-Task 4: Add Defensive Error Handling
+Example: qs.stringify({ filters: { project: { name: { $eq: 'Downtown Views' } } } })
 
-In PropertiesListing.tsx, find the filtering logic. If the API returns a 400, log the entire response body from Strapi. Strapi often sends a JSON object explaining why it's a 400 (e.g., "Field not found").
+4. Check for "Draft" Status
+
+Confirm that the Project titled "Downtown Views" is actually Published. If the project is a Draft, filtering for it will often return a 400 or an empty array depending on the Strapi version.
+
+5. Debug the Error Object
+
+In api.ts:27, there is a log for [API Error] Response: 400 Bad Request.
+
+Agent: Expand that object and look at error.details. It will tell you exactly which field is "undefined" or "missing" according to Strapi. Fix based on that specific feedback.
