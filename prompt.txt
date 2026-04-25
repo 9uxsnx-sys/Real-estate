@@ -1,25 +1,39 @@
-Issue: The UI shows "Failed to load properties" and PageTransition.tsx is throwing GSAP target errors. The application is trying to transition/animate content that doesn't exist.
+Task: The PropertiesListing component is crashing (White Screen) when fetching more data. You must fix the data transformation logic, register missing GSAP plugins, and handle 400 Bad Request errors.
 
-Task 1: Fix the Data Fetch (The Root Cause)
+1. Fix the Fatal Crash (formatters.ts & imagePath)
+The Error: Uncaught TypeError: imagePath.startsWith is not a function.
 
-Audit properties fetch: Go to the component rendering the "Failed to load properties" message.
+The Cause: getImageUrl expects a string, but when you load more properties, it’s receiving null, undefined, or an object.
 
-Check the URL: Ensure it matches your Strapi endpoint (e.g., http://localhost:1337/api/properties?populate=*).
+Action: Open formatters.ts and update getImageUrl to include a safety check.
 
-CORS/Permissions: Verify if the browser console (Network tab) shows a 403 Forbidden or CORS error. If it's a 403, you must update Strapi's Public permissions for the properties content type.
+Logic: If imagePath is missing or not a string, return a placeholder image string or an empty string instead of crashing.
 
-Response Structure: Vistahaven appears to be a high-end template or custom build. Ensure you are mapping the data correctly based on the Strapi version (e.g., res.data.data vs res.data).
+Check: Ensure the mapping in PropertiesListing.tsx:128 passes the correct nested path (e.g., item.attributes.image.data.attributes.url).
 
-Task 2: Fix PageTransition.tsx:34 (The Side Effect)
+2. Fix the API 400 (Bad Request)
+The Error: .../api/properties?filters[project][name][$eq]=... 400 (Bad Request).
 
-Add Safety Checks: In PageTransition.tsx, line 34, you are targeting elements that aren't in the DOM.
+The Cause: The URL encoding for the project filter is likely malformed or the Strapi field name project doesn't match the relation name in the backend.
 
-The Fix: Add a check to ensure the target exists before calling GSAP.
+Action: * Log the exact URL being generated for "Load More."
 
-Example: if (myElementRef.current) { gsap.to(...) } or use gsap.context() for better cleanup.
+Verify that the relation in Strapi is named project and not projects.
 
-Handle Loading State: Ensure the transition doesn't attempt to animate the "Property Cards" until the loading state is false and the data is successfully mapped.
+Ensure the agent uses a robust query builder (like qs) or correctly encodes spaces in project names (e.g., "Downtown Views").
 
-Task 3: Environment Sync
+3. Fix GSAP "Missing Plugin" & "Target Null"
+The Error: Invalid property scrollTrigger... Missing plugin?.
 
-Check if the .env file has the correct STRAPI_API_URL. If the frontend is looking for localhost:1337 but Strapi is on a different port (or not running), the fetch will fail immediately.
+Action: * Search the codebase for gsap.registerPlugin. If it's missing ScrollTrigger, add it: gsap.registerPlugin(ScrollTrigger);.
+
+Crucial: The "Target null" error is happening because GSAP is trying to animate elements that vanished when the React app crashed. Fixing the Image error (Task 1) will likely solve this, but add a check: if (!target) return; before any animation.
+
+4. Full Picture Diagnostic Report
+Agent, please provide a report covering:
+
+Data Structure: What does the JSON response look like for the "Load More" properties? (Print it to console).
+
+Mapping: Why did imagePath fail? Was the image missing in Strapi, or was the nesting level different?
+
+Fix Applied: Show the updated getImageUrl and the fixed Fetch URL.

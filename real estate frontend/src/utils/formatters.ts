@@ -23,8 +23,8 @@ export const getPropertyTypeLabel = (type: Property['property_type']): string =>
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
 
-export const getImageUrl = (imagePath: string | null | undefined): string => {
-  if (!imagePath) {
+export const getImageUrl = (imagePath: string | null | undefined | any): string => {
+  if (!imagePath || typeof imagePath !== 'string') {
     return 'https://proxy.extractcss.dev/https://framerusercontent.com/images/rfYNgbnQgBOihPRT6UaLPi82u0.jpg?scale-down-to=1024';
   }
 

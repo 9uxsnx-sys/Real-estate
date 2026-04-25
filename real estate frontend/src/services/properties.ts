@@ -1,6 +1,8 @@
 import { fetchApi, API_URL } from './api';
 import type { Property } from '../types';
 
+console.log('[API] Using API_URL:', API_URL);
+
 export interface PropertyFilters {
   search?: string;
   propertyType?: string;
@@ -26,7 +28,8 @@ function buildQueryParams(filters: PropertyFilters, locale?: string) {
   }
 
   if (filters.projectName) {
-    params['filters[project][name][$eq]'] = filters.projectName;
+    const encodedName = encodeURIComponent(filters.projectName);
+    params['filters[project][name][$eq]'] = encodedName;
   }
 
   if (filters.minSpace) {
@@ -53,6 +56,7 @@ function buildQueryParams(filters: PropertyFilters, locale?: string) {
 
   params['populate'] = '*';
 
+  console.log('[API] Query params:', params);
   return params;
 }
 

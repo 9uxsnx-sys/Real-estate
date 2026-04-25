@@ -2,10 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PropertyCard } from '@/components/ui/property-card';
 import { HeroSection } from '../components/filters';
 import { useProperties } from '../hooks';
 import { formatPrice, getImageUrl } from '../utils';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface PropertiesListingProps {
   onPropertyClick?: (id: string) => void;
@@ -42,6 +45,7 @@ export const PropertiesListing: React.FC<PropertiesListingProps> = ({ onProperty
     if (!gridRef.current) return;
 
     const cards = gridRef.current.querySelectorAll('.property-card');
+    if (!cards || cards.length === 0) return;
 
     gsap.fromTo(cards,
       {
