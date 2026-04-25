@@ -1,29 +1,31 @@
-Agent Directive: Remove Fallbacks & Switch to Native Project Filtering
-The Situation: I have successfully linked the properties to projects in the Strapi Admin. The "Project" field is now visible and populated. However, the website shows "Not Found" because the code is still using the area fallback.
+Agent Directive: STOP Area Mapping & Force Native Relation Filter
+Context: The manual "Project to Area" mapping is now preventing the website from working. I have verified that the relation is visible in the Strapi Admin. We must stop using filters[area] for project selections.
 
-Task 1: Delete the Fallback Logic
+Task 1: Delete the Mapping Hack
 
-Open properties.ts and api.ts.
+Locate the projectToAreaMap constant in properties.ts. Delete it.
 
-Remove the projectToAreaMap.
+Locate the logic that says [API] Mapping project to area. Delete it.
 
-Remove the logic that switches filters[project] to filters[area].
+Constraint: Do not allow the code to "fall back" to area. If a project is selected, the query must target the project relationship.
 
-Task 2: Implement Native Relationship Filter
+Task 2: Fix the 400 Bad Request (The "Deep Filter" Syntax)
 
-Update the fetch logic so that when a project is selected, it uses the correct Strapi deep-filtering syntax:
-?filters[project][name][$eq]=Garden Heights&populate=*
+The log shows: filters[project][name][$eq]=... is failing with a 400.
 
-Ensure the populate=* is always present so the project data is included in the response.
+Action: Change the filter syntax to the Strapi v4/v5 standard for relations. Try this exact structure:
+filters[project][name][$eq]=Garden Heights
 
-Task 3: Verify Data Mapping
+If that still returns 400: Try changing the key to plural: filters[projects][name][$eq]=Garden Heights.
 
-The "Not Found" screen appears when the properties array is empty.
+Important: Use the qs library to stringify the query. Manual string templates often break Strapi's bracket parsing.
 
-Once you update the filter, console.log the API response.
+Task 3: Ensure "Populate" is Correct
 
-Ensure the frontend is reading the property ID and attributes correctly from the new relationship-based response.
+Ensure every request includes populate=*. Without this, Strapi won't "look" into the relationship to find the name you are filtering for.
 
-Task 4: Clear GSAP Targets
+Task 4: Clear the "Not Found" UI
 
-Since the "Not Found" state removes the property cards from the DOM, ensure GSAP is not trying to animate them until the properties.length > 0.
+The "Not Found" screen is appearing because the area filter is looking for "Jumeirah Golf Estates" in the area column, finding nothing, and returning an empty array.
+
+Once the filter is corrected to target the project relation, the data will return, and the UI will show the property cards.

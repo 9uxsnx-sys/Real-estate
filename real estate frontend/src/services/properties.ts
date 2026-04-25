@@ -47,7 +47,6 @@ function buildQueryParams(filters: PropertyFilters, locale?: string) {
         ...queryObj.filters,
         area: { $eq: mappedArea }
       };
-      console.log('[API] Mapping project to area:', filters.projectName, '->', mappedArea);
     }
   }
 
