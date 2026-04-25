@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+build/
+
+# Strapi
+.strapi/
+.strapi-updater.json
+
+# Database
+.tmp/
+data.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+
+# Backend specific
+real-estate-backend/node_modules/
+real-estate-backend/package-lock.json
+
+# Frontend specific (already has its own)
+# "real estate frontend"/node_modules/
+# "real estate frontend"/package-lock.json
+
+# Uploaded media (in production, use cloud storage)
+real-estate-backend/public/uploads/*.jpg
+real-estate-backend/public/uploads/*.png
+real-estate-backend/public/uploads/*.gif
+!real-estate-backend/public/uploads/.gitkeep

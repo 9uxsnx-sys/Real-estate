@@ -1,0 +1,23 @@
+{
+  "collectionName": "project_features",
+  "info": {
+    "singularName": "project-feature",
+    "pluralName": "project-features",
+    "displayName": "Project Feature"
+  },
+  "options": {
+    "private": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

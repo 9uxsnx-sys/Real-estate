@@ -1,0 +1,40 @@
+{
+  "collectionName": "custom_project_sections",
+  "info": {
+    "singularName": "custom-project-section",
+    "pluralName": "custom-project-sections",
+    "displayName": "Custom Project Section"
+  },
+  "options": {
+    "private": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "project.feature"
+    }
+  }
+}
