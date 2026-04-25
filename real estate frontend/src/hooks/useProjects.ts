@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchProjects } from '../services/projects';
-import type { Project, StrapiResponse } from '../types';
+import type { Project } from '../types';
 
 interface UseProjectsResult {
   projects: Project[];
@@ -27,29 +27,10 @@ export function useProjects(locale?: string): UseProjectsResult {
       setError(null);
 
       try {
-        const response: StrapiResponse<Project[]> = await fetchProjects(locale);
+        const projectData = await fetchProjects(locale);
 
         if (isMounted) {
-          const projectData = Array.isArray(response.data)
-            ? response.data
-            : response.data
-            ? [response.data]
-            : [];
-
-          const formattedProjects: Project[] = projectData.map((p: any) => ({
-            id: p.id,
-            documentId: p.documentId,
-            name: p.name,
-            short_description: p.short_description || p.shortDescription || '',
-            city: p.city,
-            place: p.place,
-            description: p.description,
-            first_image: p.first_image || p.firstImage || '',
-            second_image: p.second_image || p.secondImage || '',
-            google_map_embed: p.google_map_embed || p.googleMapEmbed,
-          }));
-
-          setProjects(formattedProjects);
+          setProjects(projectData);
         }
       } catch (err) {
         if (isMounted) {
