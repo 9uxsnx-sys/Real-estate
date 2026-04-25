@@ -1,35 +1,34 @@
-Agent Directive: Fix Desynced Strapi Schema & Relation Errors
-Context: The "Invalid key project" error proves the SQLite database is desynced from the JSON schema. The current projectToAreaMap is a temporary patch that must be removed once the database is fixed.
+Agent Directive: Force Strapi API Schema Sync & Fix "Invalid Key project"
+The Situation: The database column project_id now exists and data is linked, but the Strapi API still returns "Invalid key project." This means the Strapi Shadow Schema is out of sync with the physical database.
 
-Task 1: Force Database Schema Sync
+Task 1: The "Nuke & Rebuild" (Strapi Reset)
 
-Stop the Strapi server.
+Delete the .cache and build folders in your Strapi directory.
 
-Run Development Mode: Run npm run develop (not build). This forces Strapi to check the schema.json and attempt to alter the database tables to add the missing project_id columns.
+Run npm run build followed by npm run develop.
 
-Verify the Column: Check the Strapi Admin UI. Open a Property; does the "Project" dropdown actually show up and allow you to select a project?
+Why: Strapi generates a snapshot of your API during the build process. If the relation was added later, the API might be looking at an old snapshot that doesn't include the "project" key.
 
-Task 2: Data Migration (The "Re-Save" Fix)
+Task 2: Content-Type Permissions Refresh
 
-The Problem: Existing properties don't have a project assigned.
+In the Strapi Admin, go to Settings > Roles > Public.
 
-The Action: Since there are only a few projects, go into the Strapi Admin Panel and manually edit the properties.
+Uncheck all permissions for "Property" and "Project," then click Save.
 
-Select the correct Project for each Property.
+Re-check find and findOne for both, then click Save again.
 
-Click Save and Publish.
+Why: This forces Strapi to re-calculate the available fields for the Public API.
 
-Note: If there are too many properties, the agent should write a one-time script to iterate through /api/properties and PUT the correct project ID based on the report's ID list.
+Task 3: Revert Frontend to Native Relationship Filtering
 
-Task 3: Clean up Frontend "Workaround"
+Once the API stops returning "Invalid key," remove the projectToAreaMap fallback.
 
-Once Task 1 & 2 are done, delete the projectToAreaMap from properties.ts.
+Update the query to: ?filters[project][name][$eq]=Downtown Views&populate=*.
 
-Revert the filtering logic to use the real relationship:
-filters[project][name][$eq]=...
+Verify that the response JSON now contains a project object inside the attributes (or at the root if using Strapi v5).
 
-Ensure populate=project is included in the fetch call.
+Task 4: Check schema.json in the API folder
 
-Task 4: Final Validation
+Open src/api/property/content-types/property/schema.json.
 
-Confirm that the PUT /api/properties/33 request no longer returns "Invalid key project.
+Confirm the project relation is defined there. If it is only in the dist/ folder but not the src/ folder, your changes will be overwritten every time the server restarts.

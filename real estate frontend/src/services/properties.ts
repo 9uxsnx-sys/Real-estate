@@ -35,20 +35,10 @@ function buildQueryParams(filters: PropertyFilters, locale?: string) {
   }
 
   if (filters.projectName) {
-    const projectToAreaMap: Record<string, string> = {
-      'Marina Bay': 'Dubai Marina',
-      'Downtown Views': 'Downtown Dubai',
-      'Palm Residences': 'Palm Jumeirah',
-      'Garden Heights': 'Jumeirah Golf Estates',
+    queryObj.filters = {
+      ...queryObj.filters,
+      area: { $eq: filters.projectName }
     };
-    const mappedArea = projectToAreaMap[filters.projectName];
-    if (mappedArea) {
-      queryObj.filters = {
-        ...queryObj.filters,
-        area: { $eq: mappedArea }
-      };
-      console.log('[API] Mapping project to area:', filters.projectName, '->', mappedArea);
-    }
   }
 
   if (filters.minSpace) {

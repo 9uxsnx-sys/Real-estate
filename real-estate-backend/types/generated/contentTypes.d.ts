@@ -581,8 +581,6 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    project: Schema.Attribute.Relation<'manyToOne', 'api::project.project'> &
-      Schema.Attribute.Required;
     property_code: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
