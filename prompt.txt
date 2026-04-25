@@ -1,18 +1,25 @@
-New Strategy: Skip Strapi Cloud Interaction
+Issue: The UI shows "Failed to load properties" and PageTransition.tsx is throwing GSAP target errors. The application is trying to transition/animate content that doesn't exist.
 
-The previous attempt failed because of the interactive Cloud login. Let's bypass this completely to ensure a non-interactive setup. Please follow these exact steps:
+Task 1: Fix the Data Fetch (The Root Cause)
 
-Clean up: Delete the real-estate-backend folder if it was partially created to start fresh.
+Audit properties fetch: Go to the component rendering the "Failed to load properties" message.
 
-Execution Policy: If you are on PowerShell, continue using -ExecutionPolicy Bypass.
+Check the URL: Ensure it matches your Strapi endpoint (e.g., http://localhost:1337/api/properties?populate=*).
 
-Run Silent Install: Execute the following command which explicitly skips the cloud login and the local browser open:
-npx create-strapi-app@latest real-estate-backend --quickstart --no-run --skip-cloud
+CORS/Permissions: Verify if the browser console (Network tab) shows a 403 Forbidden or CORS error. If it's a 403, you must update Strapi's Public permissions for the properties content type.
 
-Manual Environment Check: If the command still hangs, instead of create-strapi-app, run:
-npm init strapi-app@latest real-estate-backend -- --quickstart --no-run --skip-cloud
+Response Structure: Vistahaven appears to be a high-end template or custom build. Ensure you are mapping the data correctly based on the Strapi version (e.g., res.data.data vs res.data).
 
-Confirmation: Once the files are on the disk, run npm run build inside the folder and let me know when it is done.
+Task 2: Fix PageTransition.tsx:34 (The Side Effect)
 
+Add Safety Checks: In PageTransition.tsx, line 34, you are targeting elements that aren't in the DOM.
 
-note: if u fACE BIG ISSUES LIKE THESE STOOP ADN GET ME AN ISSUE REPORT SO I TELL U HOW TO FIX IT AND SO U DONT JUST KEEP GUSSING 
+The Fix: Add a check to ensure the target exists before calling GSAP.
+
+Example: if (myElementRef.current) { gsap.to(...) } or use gsap.context() for better cleanup.
+
+Handle Loading State: Ensure the transition doesn't attempt to animate the "Property Cards" until the loading state is false and the data is successfully mapped.
+
+Task 3: Environment Sync
+
+Check if the .env file has the correct STRAPI_API_URL. If the frontend is looking for localhost:1337 but Strapi is on a different port (or not running), the fetch will fail immediately.

@@ -31,17 +31,19 @@ export const PageTransition: React.FC<{ children: React.ReactNode }> = ({ childr
           'section, header, footer, .animate-on-load'
         );
         
-        gsap.fromTo(children,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            stagger: 0.15,
-            ease: 'power3.out',
-            delay: 0.2
-          }
-        );
+        if (children.length > 0) {
+          gsap.fromTo(children,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              stagger: 0.15,
+              ease: 'power3.out',
+              delay: 0.2
+            }
+          );
+        }
       }
     }, pageRef);
     
