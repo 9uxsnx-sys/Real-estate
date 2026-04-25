@@ -49,11 +49,33 @@ export interface ProjectFeature extends Struct.ComponentSchema {
   };
 }
 
+export interface PropertyPropertyFeature extends Struct.ComponentSchema {
+  collectionName: 'property_features';
+  info: {
+    displayName: 'Property Feature';
+    pluralName: 'property-features';
+    singularName: 'property-feature';
+  };
+  options: {
+    private: false;
+  };
+  attributes: {
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'project.custom-project-section': ProjectCustomProjectSection;
       'project.feature': ProjectFeature;
+      'property.property-feature': PropertyPropertyFeature;
     }
   }
 }

@@ -1,37 +1,35 @@
-Issue: The filter filters[project][name][$eq]=... is failing. You must verify the exact schema path instead of using fallbacks like area.
+Agent Directive: Fix Desynced Strapi Schema & Relation Errors
+Context: The "Invalid key project" error proves the SQLite database is desynced from the JSON schema. The current projectToAreaMap is a temporary patch that must be removed once the database is fixed.
 
-1. Identify the Correct Field Path:
+Task 1: Force Database Schema Sync
 
-Don't guess: Check the Project content type in the Strapi Admin.
+Stop the Strapi server.
 
-Is the main text field actually named name? If it is named title, the filter MUST be changed to filters[project][title][$eq]=....
+Run Development Mode: Run npm run develop (not build). This forces Strapi to check the schema.json and attempt to alter the database tables to add the missing project_id columns.
 
-If the relationship itself is plural, it MUST be filters[projects][name][$eq]=....
+Verify the Column: Check the Strapi Admin UI. Open a Property; does the "Project" dropdown actually show up and allow you to select a project?
 
-2. Audit the Query String Construction:
+Task 2: Data Migration (The "Re-Save" Fix)
 
-Your logs show Downtown%20Views. Ensure you are using the qs library with { encodeValuesOnly: true }. Strapi can be very sensitive to how brackets [] are encoded in nested filters.
+The Problem: Existing properties don't have a project assigned.
 
-Update the fetcher:
+The Action: Since there are only a few projects, go into the Strapi Admin Panel and manually edit the properties.
 
-JavaScript
-// Ensure the query looks like this for Strapi v4/v5
-const query = qs.stringify({
-  filters: {
-    project: { // Verify if this should be 'projects'
-      title: { // Verify if this should be 'name'
-        $eq: selectedProjectName
-      }
-    }
-  },
-  populate: '*'
-});
-3. Deep-Dive the 400 Error:
+Select the correct Project for each Property.
 
-In api.ts:27, expand the [API Error] object in the console.
+Click Save and Publish.
 
-Look for response.data.error.details. It will likely say something like: "Column 'name' not found" or "Relation 'project' not found." * Use that exact feedback to rename the filter keys.
+Note: If there are too many properties, the agent should write a one-time script to iterate through /api/properties and PUT the correct project ID based on the report's ID list.
 
-4. Permission Check:
+Task 3: Clean up Frontend "Workaround"
 
-Confirm that the Project content type has find and findOne enabled for the Public role. If the related type isn't public, filtering by its attributes will fail with a 400.
+Once Task 1 & 2 are done, delete the projectToAreaMap from properties.ts.
+
+Revert the filtering logic to use the real relationship:
+filters[project][name][$eq]=...
+
+Ensure populate=project is included in the fetch call.
+
+Task 4: Final Validation
+
+Confirm that the PUT /api/properties/33 request no longer returns "Invalid key project.
