@@ -25,6 +25,12 @@
       },
       "required": true
     },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "properties"
+    },
     "area": {
       "type": "string",
       "required": true

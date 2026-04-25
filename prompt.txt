@@ -1,34 +1,29 @@
-Agent Directive: Force Strapi API Schema Sync & Fix "Invalid Key project"
-The Situation: The database column project_id now exists and data is linked, but the Strapi API still returns "Invalid key project." This means the Strapi Shadow Schema is out of sync with the physical database.
+Agent Directive: Remove Fallbacks & Switch to Native Project Filtering
+The Situation: I have successfully linked the properties to projects in the Strapi Admin. The "Project" field is now visible and populated. However, the website shows "Not Found" because the code is still using the area fallback.
 
-Task 1: The "Nuke & Rebuild" (Strapi Reset)
+Task 1: Delete the Fallback Logic
 
-Delete the .cache and build folders in your Strapi directory.
+Open properties.ts and api.ts.
 
-Run npm run build followed by npm run develop.
+Remove the projectToAreaMap.
 
-Why: Strapi generates a snapshot of your API during the build process. If the relation was added later, the API might be looking at an old snapshot that doesn't include the "project" key.
+Remove the logic that switches filters[project] to filters[area].
 
-Task 2: Content-Type Permissions Refresh
+Task 2: Implement Native Relationship Filter
 
-In the Strapi Admin, go to Settings > Roles > Public.
+Update the fetch logic so that when a project is selected, it uses the correct Strapi deep-filtering syntax:
+?filters[project][name][$eq]=Garden Heights&populate=*
 
-Uncheck all permissions for "Property" and "Project," then click Save.
+Ensure the populate=* is always present so the project data is included in the response.
 
-Re-check find and findOne for both, then click Save again.
+Task 3: Verify Data Mapping
 
-Why: This forces Strapi to re-calculate the available fields for the Public API.
+The "Not Found" screen appears when the properties array is empty.
 
-Task 3: Revert Frontend to Native Relationship Filtering
+Once you update the filter, console.log the API response.
 
-Once the API stops returning "Invalid key," remove the projectToAreaMap fallback.
+Ensure the frontend is reading the property ID and attributes correctly from the new relationship-based response.
 
-Update the query to: ?filters[project][name][$eq]=Downtown Views&populate=*.
+Task 4: Clear GSAP Targets
 
-Verify that the response JSON now contains a project object inside the attributes (or at the root if using Strapi v5).
-
-Task 4: Check schema.json in the API folder
-
-Open src/api/property/content-types/property/schema.json.
-
-Confirm the project relation is defined there. If it is only in the dist/ folder but not the src/ folder, your changes will be overwritten every time the server restarts.
+Since the "Not Found" state removes the property cards from the DOM, ensure GSAP is not trying to animate them until the properties.length > 0.
