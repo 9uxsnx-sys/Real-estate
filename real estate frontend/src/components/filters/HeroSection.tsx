@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
-import { properties } from '../../data/properties';
+import { useProjects } from '../../hooks';
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -20,7 +20,6 @@ interface HeroSectionProps {
   resultsCount: number;
 }
 
-// Custom Dropdown Component
 interface DropdownOption {
   value: string;
   label: string;
@@ -71,7 +70,7 @@ const CustomDropdown: React.FC<{
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             className="absolute top-full left-0 mt-2 w-full min-w-[180px] bg-white rounded-2xl shadow-xl border border-[rgb(230,230,230)] overflow-visible z-[9999] max-h-[300px] overflow-y-auto"
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: "easeOut" } }}
@@ -134,33 +133,33 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const titleRef = useRef<HTMLHeadingElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
+  const { projects } = useProjects(i18n.language);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
-      
+
       tl.fromTo(titleRef.current,
         { opacity: 0, y: 50, scale: 0.95 },
         { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' }
       );
-      
+
       tl.fromTo(searchBarRef.current,
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
         '-=0.4'
       );
     }, heroRef);
-    
+
     return () => ctx.revert();
   }, []);
 
-  // Get unique projects from properties data
-  const projectOptions = React.useMemo(() => {
-    const uniqueProjects = [...new Set(properties.map((p) => p.projectName))];
+  const projectOptions = useMemo(() => {
     return [
       { value: '', label: t('hero.allProjects') },
-      ...uniqueProjects.map((name) => ({ value: name, label: name })),
+      ...projects.map((p) => ({ value: p.name, label: p.name })),
     ];
-  }, [i18n.language, t]);
+  }, [projects, t]);
 
   const sortOptions = [
     { value: 'featured', label: t('hero.featured') },
@@ -183,7 +182,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section ref={heroRef} className="bg-white border-b border-[rgb(230,230,230)] py-6 md:py-10 relative z-[100]">
       <div className="max-w-[1360px] mx-auto px-4 md:px-8 lg:px-20">
-        {/* Header */}
         <div className="mb-4 md:mb-6">
           <h1
             ref={titleRef}
@@ -194,12 +192,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </h1>
         </div>
 
-        {/* Unified Search & Filter Bar */}
         <div ref={searchBarRef} className="bg-[rgb(250,250,250)] rounded-2xl md:rounded-3xl p-3 md:p-5">
 
-          {/* Mobile Layout */}
           <div className="flex flex-col gap-3 md:hidden">
-            {/* Row 1: Search */}
             <div className="relative">
               <svg
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[rgb(136,136,136)]"
@@ -221,7 +216,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Row 2: Sort + Type */}
             <div className="grid grid-cols-2 gap-2">
               <CustomDropdown
                 value={sortBy}
@@ -237,7 +231,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Row 4: Project + Space */}
             <div className="grid grid-cols-2 gap-2">
               <CustomDropdown
                 value={selectedProject}
@@ -269,9 +262,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </div>
 
-          {/* Tablet Layout: 3 Rows */}
           <div className="hidden md:flex lg:hidden flex-col gap-3">
-            {/* Row 1: Search Bar */}
             <div className="relative">
               <svg
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[rgb(136,136,136)]"
@@ -293,7 +284,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Row 2: Sort + Property Type + Project (3 equal columns) */}
             <div className="grid grid-cols-3 gap-3">
               <CustomDropdown
                 value={sortBy}
@@ -316,7 +306,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Row 3: Space Range */}
             <div className="flex items-center gap-3">
               <input
                 type="number"
@@ -338,9 +327,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </div>
 
-          {/* Desktop Layout: Single Row */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Location Search */}
             <div className="relative flex-1">
               <svg
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[rgb(136,136,136)]"
@@ -362,7 +349,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Filters */}
             <CustomDropdown
               value={sortBy}
               options={sortOptions}
@@ -383,7 +369,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               width="w-[160px]"
             />
 
-            {/* Space Range */}
             <div className="flex items-center gap-2">
               <input
                 type="number"
@@ -404,7 +389,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               />
             </div>
 
-            {/* Results Count */}
             <span
               className="ml-auto text-[14px] text-[rgb(136,136,136)] font-light whitespace-nowrap"
               style={{ fontFamily: 'Geist, sans-serif' }}

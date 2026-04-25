@@ -8,7 +8,7 @@ export const formatPrice = (price: number): string => {
   }).format(price);
 };
 
-export const getPropertyTypeLabel = (type: Property['propertyType']): string => {
+export const getPropertyTypeLabel = (type: Property['property_type']): string => {
   const labels: Record<string, string> = {
     studio: 'Studio',
     f1: 'F1',
@@ -19,4 +19,26 @@ export const getPropertyTypeLabel = (type: Property['propertyType']): string => 
     garage: 'Garage',
   };
   return labels[type] || type;
+};
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+
+export const getImageUrl = (imagePath: string | null | undefined): string => {
+  if (!imagePath) {
+    return 'https://proxy.extractcss.dev/https://framerusercontent.com/images/rfYNgbnQgBOihPRT6UaLPi82u0.jpg?scale-down-to=1024';
+  }
+
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+
+  if (imagePath.startsWith('/uploads/')) {
+    return `${API_URL}${imagePath}`;
+  }
+
+  if (imagePath.startsWith('/assets/')) {
+    return imagePath;
+  }
+
+  return `${API_URL}/uploads/${imagePath}`;
 };

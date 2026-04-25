@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
 import { PropertyCard } from '@/components/ui/property-card';
 import { HeroSection } from '../components/filters';
-import { properties } from '../data/properties';
-import { formatPrice } from '../utils/formatters';
+import { useProperties } from '../hooks';
+import { formatPrice, getImageUrl } from '../utils';
 
 interface PropertiesListingProps {
   onPropertyClick?: (id: string) => void;
@@ -26,76 +26,31 @@ export const PropertiesListing: React.FC<PropertiesListingProps> = ({ onProperty
   const [visibleCount, setVisibleCount] = React.useState(8);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  // Filter and sort properties
-  const filteredProperties = React.useMemo(() => {
-    let result = [...properties];
+  const { properties, loading, error } = useProperties({
+    search: searchQuery,
+    propertyType: propertyTypeFilter || undefined,
+    projectName: selectedProject || undefined,
+    minSpace: minSpace ? parseInt(minSpace) : undefined,
+    maxSpace: maxSpace ? parseInt(maxSpace) : undefined,
+    sortBy: sortBy as any,
+  });
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          p.location.toLowerCase().includes(query)
-      );
-    }
+  const visibleProperties = properties.slice(0, visibleCount);
+  const hasMore = visibleCount < properties.length;
 
-    if (selectedProject) {
-      result = result.filter((p) => p.projectName === selectedProject);
-    }
-
-    if (propertyTypeFilter) {
-      result = result.filter((p) => p.propertyType === propertyTypeFilter);
-    }
-
-    if (minSpace) {
-      const min = parseInt(minSpace);
-      if (!isNaN(min)) {
-        result = result.filter((p) => p.spaceSqm >= min);
-      }
-    }
-    if (maxSpace) {
-      const max = parseInt(maxSpace);
-      if (!isNaN(max)) {
-        result = result.filter((p) => p.spaceSqm <= max);
-      }
-    }
-
-    switch (sortBy) {
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'newest':
-        result.reverse();
-        break;
-      case 'featured':
-      default:
-        result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-        break;
-    }
-
-    return result;
-  }, [sortBy, searchQuery, selectedProject, propertyTypeFilter, minSpace, maxSpace]);
-
-  const visibleProperties = filteredProperties.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredProperties.length;
-
-  // GSAP stagger animation for property cards
   useEffect(() => {
     if (!gridRef.current) return;
-    
+
     const cards = gridRef.current.querySelectorAll('.property-card');
-    
+
     gsap.fromTo(cards,
-      { 
-        opacity: 0, 
+      {
+        opacity: 0,
         y: 60,
         scale: 0.95
       },
-      { 
-        opacity: 1, 
+      {
+        opacity: 1,
         y: 0,
         scale: 1,
         duration: 0.7,
@@ -107,10 +62,10 @@ export const PropertiesListing: React.FC<PropertiesListingProps> = ({ onProperty
         }
       }
     );
-  }, [visibleProperties]);
+  }, [visibleProperties.length]);
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 8, filteredProperties.length));
+    setVisibleCount((prev) => Math.min(prev + 8, properties.length));
   };
 
   const handlePropertyClick = (id: string) => {
@@ -119,9 +74,35 @@ export const PropertiesListing: React.FC<PropertiesListingProps> = ({ onProperty
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading properties...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Failed to load properties. Please try again.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-black text-white rounded-full"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section with Unified Search Bar */}
       <HeroSection
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -135,34 +116,30 @@ export const PropertiesListing: React.FC<PropertiesListingProps> = ({ onProperty
         onMinSpaceChange={setMinSpace}
         maxSpace={maxSpace}
         onMaxSpaceChange={setMaxSpace}
-        resultsCount={filteredProperties.length}
+        resultsCount={properties.length}
       />
 
-      {/* Properties Grid/List */}
       <section className="py-12 md:py-16 relative" style={{ zIndex: 1 }}>
         <div className="max-w-[1360px] mx-auto px-6 sm:px-4 md:px-8 lg:px-20">
-          {/* Grid/List */}
           <div ref={gridRef} className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {visibleProperties.map((property) => (
-              <div key={property.id} className="property-card">
+              <div key={property.documentId} className="property-card">
                 <PropertyCard
-                  imageUrl={property.image}
+                  imageUrl={getImageUrl(property.image)}
                   price={formatPrice(property.price)}
                   title={property.name}
-                  location={`${property.projectName}, ${property.location}`}
+                  location={property.project ? `${property.project.name}, ${property.area}` : `${property.area}, ${property.city}`}
                   beds={property.beds}
                   baths={property.baths}
-                  space={property.sqft}
-                  propertyType={property.propertyType}
-                  isNew={property.featured}
-                  onClick={() => handlePropertyClick(property.id)}
+                  space={property.space_sqm}
+                  propertyType={property.property_type}
+                  onClick={() => handlePropertyClick(property.documentId)}
                 />
               </div>
             ))}
           </div>
 
-          {/* Empty State */}
-          {filteredProperties.length === 0 && (
+          {properties.length === 0 && (
             <div className="text-center py-16">
               <svg
                 width="64"
@@ -191,7 +168,6 @@ export const PropertiesListing: React.FC<PropertiesListingProps> = ({ onProperty
             </div>
           )}
 
-          {/* Load More Button */}
           {hasMore && (
             <div className="text-center mt-12">
               <button

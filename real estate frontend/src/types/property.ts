@@ -1,40 +1,39 @@
 export interface Property {
   id: string;
+  documentId: string;
   name: string;
-  projectName: string;
-  location: string;
+  area: string;
+  city: string;
   price: number;
-  category: 'For Sale' | 'For Rent' | 'For Investment' | 'Luxury';
-  propertyType: 'studio' | 'f1' | 'f2' | 'f3' | 'f4' | 'f5+' | 'garage';
-  spaceSqm: number;
+  property_type: 'studio' | 'f1' | 'f2' | 'f3' | 'f4' | 'f5+' | 'garage';
+  space_sqm: number;
   beds: number;
   baths: number;
-  sqft: number;
   image: string;
-  featured?: boolean;
+  property_code: string;
+  project?: {
+    id: number;
+    documentId: string;
+    name: string;
+  };
 }
 
-// Future Frappe child table structure for features
 export interface PropertyFeature {
+  id: string;
   name: string;
-  feature_name: string;
-  icon: string;
 }
 
-// Future Frappe child table structure for amenities
 export interface PropertyAmenity {
+  id: string;
   name: string;
-  amenity_name: string;
 }
 
-// Future Frappe child table structure for gallery
 export interface PropertyGalleryImage {
-  name: string;
-  image: string;
+  id: string;
+  url: string;
   caption?: string;
 }
 
-// Extended property with all sections (for future Frappe integration)
 export interface PropertyDetail extends Property {
   description?: string;
   features?: PropertyFeature[];
@@ -45,6 +44,26 @@ export interface PropertyDetail extends Property {
     lng: number;
     address: string;
   };
-  propertyCode?: string;
   whatsappNumber?: string;
+}
+
+export interface StrapiResponse<T> {
+  data: T | T[] | null;
+  meta: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
+export interface StrapiPropertyResponse {
+  data: {
+    id: number;
+    documentId: string;
+    attributes: Property;
+  };
+  meta: any;
 }

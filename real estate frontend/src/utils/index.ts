@@ -1,1 +1,1 @@
-export { formatPrice, getPropertyTypeLabel } from './formatters';
+export { formatPrice, getPropertyTypeLabel, getImageUrl } from './formatters';

@@ -11,10 +11,10 @@ interface PropertySpecsProps {
 export const PropertySpecs: React.FC<PropertySpecsProps> = ({ property }) => {
   const { t } = useTranslation();
   const specs = [
-    { icon: Home, label: getPropertyTypeLabel(property.propertyType) },
+    { icon: Home, label: getPropertyTypeLabel(property.property_type) },
     { icon: Bed, label: `${property.beds} ${t('property.beds')}` },
     { icon: Bath, label: `${property.baths} ${t('property.baths')}` },
-    { icon: Square, label: `${property.spaceSqm} ${t('property.sqft')}` },
+    { icon: Square, label: `${property.space_sqm} m²` },
   ];
 
   return (

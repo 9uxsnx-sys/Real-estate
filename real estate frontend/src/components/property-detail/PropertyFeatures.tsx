@@ -9,16 +9,8 @@ interface PropertyFeaturesProps {
 
 export const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({ features }) => {
   const { t } = useTranslation();
-  // Default features if none provided
-  const defaultFeatures: PropertyFeature[] = [
-    { name: '1', feature_name: '6 Bedrooms & 4 Bathrooms', icon: 'sparkles' },
-    { name: '2', feature_name: 'Bold Contemporary Design', icon: 'sparkles' },
-    { name: '3', feature_name: 'Professionally Landscaped Garden', icon: 'sparkles' },
-    { name: '4', feature_name: 'Spacious Driveway & Garage', icon: 'sparkles' },
-    { name: '5', feature_name: 'Investment-Ready Property', icon: 'sparkles' },
-  ];
 
-  const displayFeatures = features?.length ? features : defaultFeatures;
+  const displayFeatures = features?.length ? features : [];
 
   return (
     <div className="py-6 border-b border-[rgb(230,230,230)]">
@@ -40,7 +32,7 @@ export const PropertyFeatures: React.FC<PropertyFeaturesProps> = ({ features }) 
               className="text-[14px] md:text-[16px] text-[rgb(44,44,44)] font-light"
               style={{ fontFamily: 'Geist, sans-serif' }}
             >
-              {feature.feature_name}
+              {feature.name}
             </span>
           </div>
         ))}

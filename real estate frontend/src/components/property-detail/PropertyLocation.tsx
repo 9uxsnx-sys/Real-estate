@@ -8,9 +8,9 @@ interface PropertyLocationProps {
 }
 
 export const PropertyLocation: React.FC<PropertyLocationProps> = ({ 
-  address = "Bel Air, Los Angeles, CA",
-  lat = 34.100222,
-  lng = -118.450709 
+  address = "Dubai, UAE",
+  lat = 25.2048,
+  lng = 55.2708 
 }) => {
   const { t } = useTranslation();
   // Google Maps embed URL

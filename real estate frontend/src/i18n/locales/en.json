@@ -19,7 +19,7 @@
     "allTypes": "All Types",
     "project": "Project",
     "allProjects": "All Projects",
-    "space": "Space (sqft)",
+    "space": "Space",
     "min": "Min m²",
     "max": "Max m²",
     "propertiesCount": "{{count}} properties"

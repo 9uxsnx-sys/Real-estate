@@ -4,16 +4,12 @@ import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
 import { ArrowRight } from 'lucide-react';
 import { ProjectAlternatingSection } from '../components/project';
-import { properties } from '../data/properties';
+import { useProjects } from '../hooks';
+import type { Project } from '../types';
 
-interface Project {
-  id: string;
-  name: string;
-  location: string;
-  image: string;
+interface ProjectWithMeta extends Project {
   propertyCount: number;
   priceRange: { min: number; max: number };
-  types: string[];
 }
 
 export const Projects: React.FC = () => {
@@ -21,61 +17,25 @@ export const Projects: React.FC = () => {
   const { lang } = useParams<{ lang: string }>();
   const { t } = useTranslation();
   const currentLang = lang || 'en';
-  
+
   const headerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
 
-  // Aggregate unique projects from properties data
-  const getUniqueProjects = (): Project[] => {
-    const projectMap = new Map<string, Project>();
+  const { projects, loading, error } = useProjects(currentLang);
 
-    properties.forEach((prop) => {
-      const projectId = prop.projectName.toLowerCase().replace(/\s+/g, '-');
-
-      if (!projectMap.has(projectId)) {
-        projectMap.set(projectId, {
-          id: projectId,
-          name: prop.projectName,
-          location: prop.location,
-          image: prop.image,
-          propertyCount: 1,
-          priceRange: { min: prop.price, max: prop.price },
-          types: [prop.propertyType],
-        });
-      } else {
-        const project = projectMap.get(projectId)!;
-        project.propertyCount += 1;
-        project.priceRange.min = Math.min(project.priceRange.min, prop.price);
-        project.priceRange.max = Math.max(project.priceRange.max, prop.price);
-        if (!project.types.includes(prop.propertyType)) {
-          project.types.push(prop.propertyType);
-        }
-      }
-    });
-
-    return Array.from(projectMap.values());
-  };
-
-  const projects = getUniqueProjects();
-
-  const handleProjectClick = (projectId: string) => {
-    navigate(`/${currentLang}/projects/${projectId}`);
-  };
-
-  // GSAP animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(headerRef.current,
         { opacity: 0, y: 50, scale: 0.95 },
         { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' }
       );
-      
+
       gsap.fromTo(ctaRef.current,
         { opacity: 0, y: 40 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          duration: 0.7, 
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: ctaRef.current,
@@ -84,13 +44,43 @@ export const Projects: React.FC = () => {
         }
       );
     });
-    
+
     return () => ctx.revert();
   }, []);
 
+  const handleProjectClick = (documentId: string) => {
+    navigate(`/${currentLang}/projects/${documentId}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading projects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Failed to load projects. Please try again.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-black text-white rounded-full"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Page Header */}
       <section className="py-16 md:py-20 lg:py-24 border-b border-[rgb(230,230,230)]">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-4 md:px-8 lg:px-20">
           <div ref={headerRef}>
@@ -104,17 +94,15 @@ export const Projects: React.FC = () => {
         </div>
       </section>
 
-      {/* Project Sections - Alternating layouts (60/40 split) */}
       {projects.slice(0, 4).map((project, index) => (
         <ProjectAlternatingSection
-          key={project.id}
-          project={project}
+          key={project.documentId}
+          project={project as ProjectWithMeta}
           index={index}
-          onExplore={() => handleProjectClick(project.id)}
+          onExplore={() => handleProjectClick(project.documentId)}
         />
       ))}
 
-      {/* CTA Section */}
       <section className="py-16 md:py-20 bg-[rgb(248,248,248)]">
         <div className="max-w-[1360px] mx-auto px-6 sm:px-4 md:px-8 lg:px-20">
           <div ref={ctaRef} className="text-center max-w-xl mx-auto">

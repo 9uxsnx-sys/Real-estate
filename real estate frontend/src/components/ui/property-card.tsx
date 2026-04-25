@@ -75,7 +75,7 @@ export const PropertyCard = ({
           <div className="w-1.5 h-1.5 rounded-full bg-zinc-300"></div>
           <div className="flex items-center gap-1.5">
             <Maximize className="w-4 h-4 text-zinc-400 stroke-[2]" />
-            <span className="text-zinc-600 text-[14px] font-medium">{space} sqft</span>
+            <span className="text-zinc-600 text-[14px] font-medium">{space} m²</span>
           </div>
         </div>
       </div>
