@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchProjectById } from '../services/projects';
+import { fetchProjectByDocumentId } from '../services/projects';
 import type { Project } from '../types';
 
 interface UseProjectResult {
@@ -33,24 +33,10 @@ export function useProject(id: string | undefined, locale?: string): UseProjectR
       setError(null);
 
       try {
-        const response = await fetchProjectById(id, locale);
+        const projectData = await fetchProjectByDocumentId(id, locale);
 
-        if (isMounted && response?.data) {
-          const attrs = response.data.attributes || response.data;
-          setProject({
-            id: response.data.id,
-            documentId: response.data.documentId,
-            name: attrs.name,
-            short_description: attrs.short_description,
-            city: attrs.city,
-            place: attrs.place,
-            description: attrs.description,
-            first_image: attrs.first_image,
-            second_image: attrs.second_image,
-            google_map_embed: attrs.google_map_embed,
-          });
-        } else if (isMounted) {
-          setProject(null);
+        if (isMounted) {
+          setProject(projectData);
         }
       } catch (err) {
         if (isMounted) {

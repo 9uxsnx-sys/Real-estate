@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchProperties, type PropertyFilters } from '../services/properties';
-import type { Property, StrapiResponse } from '../types';
+import type { Property } from '../types';
 
 interface UsePropertiesResult {
   properties: Property[];
@@ -32,17 +32,11 @@ export function useProperties(
       setError(null);
 
       try {
-        const response: StrapiResponse<Property[]> = await fetchProperties(filters, locale);
+        const propertyData = await fetchProperties(filters, locale);
 
         if (isMounted) {
-          const propertyData = Array.isArray(response.data)
-            ? response.data
-            : response.data
-            ? [response.data]
-            : [];
-
-          setProperties(propertyData as Property[]);
-          setTotal(response.meta?.pagination?.total || propertyData.length);
+          setProperties(propertyData);
+          setTotal(propertyData.length);
         }
       } catch (err) {
         if (isMounted) {

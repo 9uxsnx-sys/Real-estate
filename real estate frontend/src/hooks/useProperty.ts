@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchPropertyById } from '../services/properties';
+import { fetchPropertyByDocumentId } from '../services/properties';
 import type { Property } from '../types';
 
 interface UsePropertyResult {
@@ -33,35 +33,10 @@ export function useProperty(id: string | undefined, locale?: string): UsePropert
       setError(null);
 
       try {
-        const response = await fetchPropertyById(id, locale);
+        const propertyData = await fetchPropertyByDocumentId(id, locale);
 
         if (isMounted) {
-          if (response?.data) {
-            const attrs = response.data.attributes || response.data;
-            setProperty({
-              id: String(response.data.id),
-              documentId: response.data.documentId,
-              name: attrs.name,
-              area: attrs.area,
-              city: attrs.city,
-              price: attrs.price,
-              property_type: attrs.property_type,
-              space_sqm: attrs.space_sqm,
-              beds: attrs.beds,
-              baths: attrs.baths,
-              image: attrs.image,
-              property_code: attrs.property_code,
-              project: attrs.project
-                ? {
-                    id: attrs.project.id || attrs.project?.data?.id,
-                    documentId: attrs.project.documentId || attrs.project?.data?.documentId,
-                    name: attrs.project.name || attrs.project?.data?.name,
-                  }
-                : undefined,
-            });
-          } else {
-            setProperty(null);
-          }
+          setProperty(propertyData);
         }
       } catch (err) {
         if (isMounted) {

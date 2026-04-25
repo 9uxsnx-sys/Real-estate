@@ -1,5 +1,5 @@
-import { fetchApi, fetchApiById, API_URL } from './api';
-import type { Property, StrapiPropertyResponse, StrapiResponse } from '../types';
+import { fetchApi, API_URL } from './api';
+import type { Property } from '../types';
 
 export interface PropertyFilters {
   search?: string;
@@ -56,43 +56,74 @@ function buildQueryParams(filters: PropertyFilters, locale?: string) {
   return params;
 }
 
+interface StrapiListResponse {
+  data: any[];
+  meta: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+}
+
 export async function fetchProperties(
   filters: PropertyFilters = {},
   locale?: string
-): Promise<StrapiResponse<Property[]>> {
+): Promise<Property[]> {
   const params = buildQueryParams(filters, locale);
-  return fetchApi<StrapiResponse<Property[]>>('/api/properties', params);
-}
+  const response = await fetchApi<StrapiListResponse>('/api/properties', params);
 
-export async function fetchPropertyById(
-  id: string,
-  locale?: string
-): Promise<StrapiPropertyResponse | null> {
-  try {
-    const params: Record<string, string> = { populate: '*' };
-    if (locale) {
-      params.locale = locale;
-    }
-    return await fetchApiById<StrapiPropertyResponse>('/api/properties', id);
-  } catch (error) {
-    console.error('Error fetching property:', error);
-    return null;
-  }
+  const propertyData = Array.isArray(response.data) ? response.data : [];
+
+  return propertyData.map((item: any) => ({
+    id: String(item.id),
+    documentId: item.documentId,
+    name: item.name,
+    area: item.area,
+    city: item.city,
+    price: item.price,
+    property_type: item.property_type,
+    space_sqm: item.space_sqm,
+    beds: item.beds,
+    baths: item.baths,
+    image: item.image,
+    property_code: item.property_code,
+    project: item.project,
+  }));
 }
 
 export async function fetchPropertyByDocumentId(
   documentId: string,
   locale?: string
-): Promise<StrapiPropertyResponse | null> {
+): Promise<Property | null> {
+  const params: Record<string, string> = {};
+  if (locale) {
+    params.locale = locale;
+  }
+  params['populate'] = '*';
+
   try {
-    const params: Record<string, string> = { populate: '*' };
-    if (locale) {
-      params.locale = locale;
-    }
-    return await fetchApiById<StrapiPropertyResponse>(
-      `/api/properties`,
-      documentId
-    );
+    const response = await fetchApi<StrapiListResponse>('/api/properties', params);
+    const item = response.data?.find((p: any) => p.documentId === documentId);
+    if (!item) return null;
+
+    return {
+      id: String(item.id),
+      documentId: item.documentId,
+      name: item.name,
+      area: item.area,
+      city: item.city,
+      price: item.price,
+      property_type: item.property_type,
+      space_sqm: item.space_sqm,
+      beds: item.beds,
+      baths: item.baths,
+      image: item.image,
+      property_code: item.property_code,
+      project: item.project,
+    };
   } catch (error) {
     console.error('Error fetching property:', error);
     return null;
@@ -101,7 +132,7 @@ export async function fetchPropertyByDocumentId(
 
 export function getImageUrl(imagePath: string | null | undefined): string {
   if (!imagePath) {
-    return '/assets/images/placeholder.jpg';
+    return 'https://proxy.extractcss.dev/https://framerusercontent.com/images/rfYNgbnQgBOihPRT6UaLPi82u0.jpg?scale-down-to=1024';
   }
 
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
@@ -117,28 +148,4 @@ export function getImageUrl(imagePath: string | null | undefined): string {
   }
 
   return `${API_URL}/uploads/${imagePath}`;
-}
-
-export function formatPropertyForDisplay(property: any): Property {
-  return {
-    id: String(property.id),
-    documentId: property.documentId,
-    name: property.name,
-    area: property.area,
-    city: property.city,
-    price: property.price,
-    property_type: property.property_type,
-    space_sqm: property.space_sqm,
-    beds: property.beds,
-    baths: property.baths,
-    image: property.image,
-    property_code: property.property_code,
-    project: property.project
-      ? {
-          id: property.project.id,
-          documentId: property.project.documentId,
-          name: property.project.name,
-        }
-      : undefined,
-  };
 }
