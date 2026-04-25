@@ -1,0 +1,23 @@
+{
+  "collectionName": "property_features",
+  "info": {
+    "singularName": "property-feature",
+    "pluralName": "property-features",
+    "displayName": "Property Feature"
+  },
+  "options": {
+    "private": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

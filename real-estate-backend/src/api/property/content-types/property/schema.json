@@ -1,0 +1,103 @@
+{
+  "kind": "collectionType",
+  "collectionName": "properties",
+  "info": {
+    "singularName": "property",
+    "pluralName": "properties",
+    "displayName": "Property",
+    "description": "Real estate properties"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "inversedBy": "properties",
+      "required": true
+    },
+    "area": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "price": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "property_type": {
+      "type": "enumeration",
+      "enum": ["studio", "f1", "f2", "f3", "f4", "f5+", "garage"],
+      "required": true
+    },
+    "space_sqm": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "beds": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "baths": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "features": {
+      "type": "component",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "property.property-feature",
+      "repeatable": true
+    },
+    "property_code": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    }
+  }
+}

@@ -4,8 +4,8 @@
 
 This report documents the complete Strapi backend setup for the VistaHaven Real Estate frontend. It covers all decisions, implementations, issues encountered, and solutions applied.
 
-**Project Status:** Phase 1 (Backend Structure) - In Progress
-**Last Updated:** April 25, 2026
+**Project Status:** Phase 1 (Backend Structure) - Completed
+**Last Updated:** April 25, 2026 (Property API added)
 **Strapi Version:** 5.43.0
 
 ---
@@ -299,9 +299,13 @@ GET /api/projects?locale=en
 - [x] API routes configured (public access)
 - [x] 4 Projects created (basic fields)
 - [x] Server running at http://localhost:1337
+- [x] Property collection type created
+- [x] Property Feature component created
+- [x] Property API routes configured (public access)
 
 ### ⏳ Partially Done
 - [~] Projects have text data but missing images, features, custom_sections
+- [~] Properties - need to create sample data
 
 ---
 
@@ -315,25 +319,26 @@ GET /api/projects?locale=en
 ### Priority 2: Create Property Collection Type
 See DYNAMIC_BREAKDOWN.md for field requirements
 
-**Property Fields Needed:**
-- name (localizable)
-- project (relation to Project)
-- area
-- city
-- price
+**Property Fields Created:**
+- name (localizable, required)
+- project (relation to Project, many-to-one)
+- area (required)
+- city (required)
+- price (decimal, required)
 - property_type (enumeration: studio, f1, f2, f3, f4, f5+, garage)
-- property_category (enumeration)
-- space_sqm
-- beds
-- baths
-- image (media)
+- space_sqm (decimal, required)
+- beds (integer, required)
+- baths (integer, required)
+- image (media, single, required)
 - gallery (media, multiple)
-- description (localizable, richtext)
-- features (component, repeatable)
-- property_code (text, unique)
+- description (richtext, localizable)
+- features (component, repeatable, localizable)
+- property_code (string, unique, required)
 
 **Property Component:**
-- property-feature: name (text)
+- property-property-feature: name (text, localizable)
+
+**Note:** property_category was removed (not needed per user request)
 
 ### Priority 3: Connect Frontend
 Update frontend to fetch from Strapi API instead of static data
@@ -377,15 +382,22 @@ Update frontend to fetch from Strapi API instead of static data
 real-estate-backend/
 ├── src/
 │   ├── api/
-│   │   └── project/
-│   │       ├── content-types/project/schema.json    (Content Type Definition)
-│   │       ├── controllers/project.ts
-│   │       ├── routes/project.ts
-│   │       └── services/project.ts
+│   │   ├── project/
+│   │   │   ├── content-types/project/schema.json
+│   │   │   ├── controllers/project.ts
+│   │   │   ├── routes/project.ts
+│   │   │   └── services/project.ts
+│   │   └── property/
+│   │       ├── content-types/property/schema.json
+│   │       ├── controllers/property.ts
+│   │       ├── routes/property.ts
+│   │       └── services/property.ts
 │   ├── components/
-│   │   └── project/
-│   │       ├── feature.json                  (Component)
-│   │       └── custom-project-section.json (Component)
+│   │   ├── project/
+│   │   │   ├── feature.json
+│   │   │   └── custom-project-section.json
+│   │   └── property/
+│   │       └── property-feature.json
 │   └── index.ts
 ├── config/
 │   ├── plugins.ts
@@ -397,8 +409,8 @@ real-estate-backend/
 │       ├── downtown-views.jpg
 │       ├── palm-residences.jpg
 │       └── garden-heights.jpg
-├── create-projects.js                      (Script used to create projects)
-├── SETUP_GUIDE.md                        (Setup guide)
+├── create-projects.js
+├── SETUP_GUIDE.md
 └── package.json
 ```
 
