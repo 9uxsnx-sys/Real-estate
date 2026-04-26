@@ -1,53 +1,32 @@
-# Strapi v4 Fresh Installation - Detailed Instructions (PostgreSQL)
+# Strapi v4 Fresh Installation - Detailed Instructions
 
-## IMPORTANT: THIS VERSION USES POSTGRESQL
+## PREREQUISITES: Node.js 18-20
 
----
+**IMPORTANT:** You MUST have Node.js version 18, 19, or 20 installed to run Strapi v4.
 
-## Goal
-Deploy a fresh Strapi v4 installation with PostgreSQL database that connects to the existing frontend **EXACTLY** like the current setup works (no guesses, no assumptions).
-
----
-
-## Prerequisites: PostgreSQL Setup
-
-### Install PostgreSQL
-1. Download from: https://www.postgresql.org/download/windows/
-2. Run the installer
-3. Set password for postgres user (remember this!)
-4. Keep default settings (port 5432)
-
-### Create Database
+Check your Node version:
 ```bash
-# Open pgAdmin or psql
-# Create new database named: strapi_v4
-
-# Or via command line:
-createdb -U postgres strapi_v4
+node --version
 ```
 
+If you have Node 21+, you need to either:
+- Use nvm-windows to switch to Node 18/20
+- Or install Node 18/20 separately
+
 ---
 
-## Phase 1: Strapi v4 Installation
+## Installation Commands
 
-### 1.1 Create New Strapi v4 Project with PostgreSQL
+Run these commands in your terminal ( Command Prompt or PowerShell ):
+
 ```bash
 # Navigate to your projects folder
 cd C:\Users\akramba\Downloads\dev-test
 
-# Create new Strapi v4 project (v4.XX - NOT v5!) with PostgreSQL
-npx create-strapi-app@4 real-estate-backend-v4 --database=postgres
+# Create new Strapi v4 project
+npx create-strapi-app@4 real-estate-backend-v4 --quickstart
 
-# It will ask for:
-# - Database name: strapi_v4
-# - Username: postgres
-# - Password: [your postgres password]
-# - Host: localhost
-# - Port: 5432
-```
-
-### 1.2 Install Dependencies
-```bash
+# Install dependencies
 cd real-estate-backend-v4
 npm install qs
 ```
