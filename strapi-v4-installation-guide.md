@@ -1,19 +1,49 @@
-# Strapi v4 Fresh Installation - Detailed Instructions
+# Strapi v4 Fresh Installation - Detailed Instructions (PostgreSQL)
+
+## IMPORTANT: THIS VERSION USES POSTGRESQL
+
+---
 
 ## Goal
-Deploy a fresh Strapi v4 installation that connects to the existing frontend **EXACTLY** like the current setup works (no guesses, no assumptions).
+Deploy a fresh Strapi v4 installation with PostgreSQL database that connects to the existing frontend **EXACTLY** like the current setup works (no guesses, no assumptions).
+
+---
+
+## Prerequisites: PostgreSQL Setup
+
+### Install PostgreSQL
+1. Download from: https://www.postgresql.org/download/windows/
+2. Run the installer
+3. Set password for postgres user (remember this!)
+4. Keep default settings (port 5432)
+
+### Create Database
+```bash
+# Open pgAdmin or psql
+# Create new database named: strapi_v4
+
+# Or via command line:
+createdb -U postgres strapi_v4
+```
 
 ---
 
 ## Phase 1: Strapi v4 Installation
 
-### 1.1 Create New Strapi v4 Project
+### 1.1 Create New Strapi v4 Project with PostgreSQL
 ```bash
 # Navigate to your projects folder
 cd C:\Users\akramba\Downloads\dev-test
 
-# Create new Strapi v4 project (v4.XX - NOT v5!)
-npx create-strapi-app@4 real-estate-backend-v4 --quickstart
+# Create new Strapi v4 project (v4.XX - NOT v5!) with PostgreSQL
+npx create-strapi-app@4 real-estate-backend-v4 --database=postgres
+
+# It will ask for:
+# - Database name: strapi_v4
+# - Username: postgres
+# - Password: [your postgres password]
+# - Host: localhost
+# - Port: 5432
 ```
 
 ### 1.2 Install Dependencies
